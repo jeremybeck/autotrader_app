@@ -1,0 +1,9 @@
+beautifulsoup4
+langchain
+langchain-community
+langchain-openai
+selenium
+undetected-chromedriver
+pandas
+streamlit
+plotly
