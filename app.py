@@ -65,12 +65,25 @@ with tabs[1]:
     st.header("Linear Model Analysis")
 
     # Select features to include in the model
-    available_features = [col for col in data.columns if col not in ['Price', 'PriceHistory', 'Unnamed: 0','Color_Exterior', 'Color_Interior']]
+    available_features = [col for col in data.columns if col not in ['Price', 'PriceHistory', 'Unnamed: 0', 'Color_Exterior', 'Color_Interior', 'Private_or_Dealer']]
     selected_features = st.multiselect("Select features to include in the model:", available_features, default=available_features)
 
-    if selected_features:
+    # Add slider for filtering by Model Year
+    min_year, max_year = int(data['Model_Year'].min()), int(data['Model_Year'].max())
+    selected_years = st.slider(
+        "Select model year range",
+        min_value=min_year,
+        max_value=max_year,
+        value=(min_year, max_year),
+        step=1
+    )
+
+    # Filter data by the selected model year range
+    filtered_data = data[(data['Model_Year'] >= selected_years[0]) & (data['Model_Year'] <= selected_years[1])]
+
+    if selected_features and not filtered_data.empty:
         # Prepare the data
-        data_subset = data[selected_features + ['Price']].dropna()
+        data_subset = filtered_data[selected_features + ['Price']].dropna()
         X = data_subset[selected_features]
         y = data_subset['Price']
 
@@ -117,8 +130,9 @@ with tabs[1]:
         scatter_fig.update_traces(marker=dict(size=8, opacity=0.7, line=dict(width=1, color='DarkSlateGrey')))
         st.plotly_chart(scatter_fig)
 
+    elif filtered_data.empty:
+        st.write("No data available for the selected model year range.")
     else:
         st.write("Please select at least one feature to train the model.")
-
 with tabs[2]:
     st.dataframe(data)
