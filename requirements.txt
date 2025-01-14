@@ -7,3 +7,4 @@ undetected-chromedriver
 pandas
 streamlit
 plotly
+scikit-criteria
